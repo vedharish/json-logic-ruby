@@ -93,7 +93,14 @@ module JSONLogic
       'merge' => ->(v, d) { v.flatten },
       'in'    => ->(v, d) { v[1].include? v[0] },
       'cat'   => ->(v, d) { v.map(&:to_s).join },
-      'log'   => ->(v, d) { puts v }
+      'log'   => ->(v, d) { puts v },
+
+      # Added custom mappings
+      'VERSION>='    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| Gem::Version.new(i) >= Gem::Version.new(j) } },
+      'VERSION>'    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| Gem::Version.new(i) > Gem::Version.new(j) } },
+      'VERSION<='    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| Gem::Version.new(i) <= Gem::Version.new(j) } },
+      'VERSION<'    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| Gem::Version.new(i) < Gem::Version.new(j) } },
+      'VERSION=='    => ->(v, d) { v.map(&:to_i).each_cons(2).all? { |i, j| Gem::Version.new(i) == Gem::Version.new(j) } }
     }
 
     def self.interpolated_block(block, data)
